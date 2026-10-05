@@ -1,19 +1,13 @@
 # JuicyRebels project state
 
-## Current — first demo launch assigned, 2026-10-05
+## Current — live demo verified, 2026-10-05
 
-Owner approved the fruit/garden action concept and requested a separate Mac/GitHub/VPS project with named Codex lanes. Canonical root `/Users/domininclynch/Desktop/Business/JuicyRebels`; remote `DomLynch/JuicyRebels`; VPS checkout `/srv/dev-projects/JuicyRebels`.
+Juicy Rebels is live at https://degree-choice.com/ . Exact previous combat18 test remains playable at https://degree-choice.com/archive/combat-18/ . Lead completed the owner-authorized first integration and Degree Choice deployment; other lanes remain read-only until allocated.
 
-Accepted baseline: independently authored combat18 source `ab135cc977089c0972d724c0e67c53f7a139cd7e`. Existing runtime modules and18 logic tests are seeded; src/garden.js is an initial three-wave90-second mission/local progression scaffold moved from the two new uncommitted Juicy files in the prototype. Juicy scene integration, mission playthrough and seed/garden visual acceptance are pending. No new live release is claimed.
+Frozen release `juicy-1-d8f015e1-fbfa10c2`, pushed runtime source `d8f015e16053bef684d507d05430445d10f69c21`. New title/menu/HUD/icon, procedural garden/gardener/fruit blasters, three creature behaviors, 90-second rescue, health/win/loss/retry, once-only seeds, visible saved wildflowers/peach lantern/berry jacket and Peach Grove unlock. Accepted combat/input/assist/effects remain unchanged; `?lab=1` opens the reference lab.
 
-Scope: Blueberry Blaster, Peach Popper, three enemies, short rescue, seed rewards, decorations/outfit and second adventure unlock. Keep left movement/targeting, right FIRE-only, walking6,13% linear stick, rate10 turn smoothing, full-body facing, +50% partial/sticky assist and universal effects. No multiplayer/backend service or Lemon Burst yet.
+Evidence: 23/23 logic tests; queued rendered desktop/two-finger victories, reload, save/purchase/reload, unlock, loss/retry, effects and layouts; actual short-screen menu swipe; public two-finger victory/purchase/reload and lab/archive reopening. All 18 public Juicy and 13 archive hashes match from VPS and Mac. nginx valid, rollback prepared, 86 protected config hashes and main served identity unchanged. No paid job/new service. See [full launch receipt](docs/dev/LAUNCH_RECEIPT.md) and [review](docs/audit/FIRST_LAUNCH_REVIEW.md).
 
-Ownership: Strategy Dev is the originating chat; Lead Dev is the first playable integration owner. Other lanes start with bounded read-only intake. [Team](docs/TEAM.md) / [plan](docs/JUICY_REBELS_PLAN.md).
+Next dependency: owner play/physical iPhone Safari and Android feel, zoom/safe-area and frame pacing. Chromium emulation is not device acceptance. Local save is prototype progression; multiplayer/accounts/Lemon Burst remain later. No speculative follow-on implementation is active.
 
-Hosting: owner explicitly requested Lead Dev build and publish the Juicy demo at https://degree-choice.com, archiving the current shooting test first. Lead is allocated implementation plus Deploy responsibilities for this first launch. Preserve the exact currently served test as a playable archive and rollback before switching Degree Choice to the separate `/var/www/juicyrebels` release root. Frozen hashes, real browser play/capture, reviewed findings resolved and protected-main-game guards remain required. No live Juicy release or archive completion is claimed yet.
-
-Bootstrap verified: nine named sidebar lanes, eight new task intakes completed read-only and waiting. All lane thread IDs/contracts are in docs/lanes/threads.json. App threads retain the existing saved Business workspace, with the independent JuicyRebels repo explicitly assigned; a separate native saved-project entry is not claimed. VPS checkout main was bootstrapped from the pushed source bundle; dedicated release/backup directories exist and no current pointer/service/vhost was activated. Test-combat repo is clean after moving only the two new uncommitted Juicy scaffold files.
-
-Checks: queued VPS job `juicyrebels-1c32da698194` exit0,23/23 logic tests (18 accepted combat +5 mission/progression); runtime/package/test input digests match. Receipts recovered to ignored artifacts/bootstrap. Blender/HF relevant installed skills read; HF authenticated as Domlynch, Pro confirmed and jobs scope available. Owner authorized bounded CPU art work with32GB VPS and HF Pro32GB CPU described as$0.03/hour; actual paid flavor/rate/persistence must be confirmed before starting. No paid job was launched by setup.
-
-Next: Lead Dev execute the [launch brief](docs/dev/LAUNCH_BRIEF.md), implement/test the first playable, archive the currently served test, then activate and verify Degree Choice under the first-launch allocation. Other lanes stay read-only until allocated. Native mobile feel remains owner acceptance.
+[Pre-launch/bootstrap history](docs/dev/history/2026-10-05-pre-launch-state.md). Canonical repo `/Users/domininclynch/Desktop/Business/JuicyRebels`; VPS development checkout `/srv/dev-projects/JuicyRebels`; GitHub `DomLynch/JuicyRebels`.

@@ -1,11 +1,13 @@
 # ARMAGEDOM developer handoff: mobile combat
 
+Juicy integration note: this is the frozen donor handoff. Its original main module now lives in `src/lab.js`, with `lab.html`/`lab.css`; Juicy `src/main.js` integrates the garden. The exact original served reference is preserved at the archive URL below.
+
 Prepared 5 October 2026. This describes the independent prototype Dom has just accepted visually, with the exact implementation supplied alongside this guide. It is an integration reference, not an ARMAGEDOM patch.
 
-- Play reference: https://degree-choice.com/?v=combat-18
+- Play reference: https://degree-choice.com/archive/combat-18/
 - Repository: https://github.com/DomLynch/Test-combat-Armagedom-1
 - Frozen runtime/code revision: `ab135cc977089c0972d724c0e67c53f7a139cd7e`
-- Live release: `combat-18-ab135cc9-d6a9e9`
+- Archived release: `combat-18-ab135cc9-d6a9e9`
 - Documentation baseline before this handoff: `de12e38ba1b75d3674fd2820b11917f770c07fa0`
 - No main ARMAGEDOM source, assets or hosting were changed to produce this package.
 

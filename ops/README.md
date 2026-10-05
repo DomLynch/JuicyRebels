@@ -4,11 +4,11 @@
 - GitHub origin: `https://github.com/DomLynch/JuicyRebels.git`
 - VPS development checkout: `/srv/dev-projects/JuicyRebels`
 - VPS queued jobs: `/srv/dev-jobs/juicyrebels-<unique-id>` through the shared runner
-- Dedicated future releases: `/var/www/juicyrebels/releases/<release-id>`
-- Future current pointer: `/var/www/juicyrebels/current` (absent until validated activation)
+- Immutable releases: `/var/www/juicyrebels/releases/<release-id>`
+- Current pointer: `/var/www/juicyrebels/current` (activated after verified first launch)
 - Dedicated rollback: `/var/backups/juicyrebels/<release-id>`
 
-VPS key/routes and queue policy are inherited from Business and installed skills, not copied into credentials files. Source checkout is separate from live release storage. No service, port, DNS/vhost or live symlink is changed by this bootstrap. Degree Choice remains assigned to the combat prototype until the Juicy release passes its activation gates. Deploy must inspect current serving state and protected main-game hashes before switching only the approved domain.
+VPS key/routes and queue policy are inherited from Business and installed skills, not copied into credentials files. Source checkout is separate from live release storage. The authorized first launch changed only Degree Choice hosting to Juicy release `juicy-1-d8f015e1-fbfa10c2`. Exact old payload: `/var/www/juicyrebels/archives/combat-18`. Backup/config/rollback: `/var/backups/juicyrebels/first-launch-20261005`. Public payload/archive checks and protected-main guards passed. See [launch receipt](../docs/dev/LAUNCH_RECEIPT.md). No new service/port/DNS or paid compute was needed.
 
 ## CPU art resources
 

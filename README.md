@@ -4,7 +4,7 @@ Independent mobile-web fruit and garden adventure, built in Three.js. Working ti
 
 First playable: a90-second garden rescue, Blueberry Blaster and Peach Popper, three creature behaviors, seed rewards, garden decorations/outfits and a second adventure unlock. Lemon Burst is planned for later.
 
-The first playable includes a procedural garden, three creature behaviors, Blueberry/Peach fruit blasters, win/loss/retry, earned seeds and saved wildflowers/lantern/outfit. Peach Grove unlocks after two rescues. Publication receipts are recorded in docs/dev/LAUNCH_RECEIPT.md when public verification completes.
+The first playable includes a procedural garden, three creature behaviors, Blueberry/Peach fruit blasters, win/loss/retry, earned seeds and saved wildflowers/lantern/outfit. Peach Grove unlocks after two rescues. Live at https://degree-choice.com/ . The exact shooting test is archived at https://degree-choice.com/archive/combat-18/ . See [launch receipt](docs/dev/LAUNCH_RECEIPT.md) for verified hashes, playthroughs and rollback.
 
 - [Project state](PROJECT_STATE.md)
 - [Team and ownership](docs/TEAM.md)
