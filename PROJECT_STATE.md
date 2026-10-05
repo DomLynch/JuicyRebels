@@ -12,4 +12,8 @@ Ownership: Strategy Dev is the originating chat; Lead Dev is the first playable 
 
 Hosting: Degree Choice currently serves the old independent combat prototype. Juicy web root reserved separately under `/var/www/juicyrebels`; setup must not switch the existing vhost or modify main ARMAGEDOM. First release needs frozen hashes, real browser play/capture, reviewer findings resolved and dedicated Deploy activation with rollback.
 
-Next: finish checked workspace/lane bootstrap; Lead Dev implement/test the first playable within this repo, then provide frozen candidate to Auditor/Deploy. Native mobile feel remains owner acceptance.
+Bootstrap verified: nine named sidebar lanes, eight new task intakes completed read-only and waiting. All lane thread IDs/contracts are in docs/lanes/threads.json. App threads retain the existing saved Business workspace, with the independent JuicyRebels repo explicitly assigned; a separate native saved-project entry is not claimed. VPS checkout main was bootstrapped from the pushed source bundle; dedicated release/backup directories exist and no current pointer/service/vhost was activated. Test-combat repo is clean after moving only the two new uncommitted Juicy scaffold files.
+
+Checks: queued VPS job `juicyrebels-1c32da698194` exit0,23/23 logic tests (18 accepted combat +5 mission/progression); runtime/package/test input digests match. Receipts recovered to ignored artifacts/bootstrap. Blender/HF relevant installed skills read; HF authenticated as Domlynch, Pro confirmed and jobs scope available. Owner authorized bounded CPU art work with32GB VPS and HF Pro32GB CPU described as$0.03/hour; actual paid flavor/rate/persistence must be confirmed before starting. No paid job was launched by setup.
+
+Next: Lead Dev implement/test [first playable assignment](docs/dev/FIRST_PLAYABLE_ASSIGNMENT.md) within this repo, then provide frozen candidate to Auditor/Deploy. Native mobile feel remains owner acceptance.

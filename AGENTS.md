@@ -20,6 +20,12 @@ Editing/light checks local; substantial tests/builds/Chromium/media use the inst
 
 Use verification-before-completion. Existing matching receipts can be reused for unchanged inputs. New mission/progression code needs logic and actual rendered play checks; native Safari/Android feel remains physical-device acceptance. npm scripts are the current command authority.
 
-Local save is prototype-only progression, not an authoritative multiplayer economy. Backend owns future accounts/server state; no shared Supabase projects, production currencies or paid services are authorized by this scaffold.
+Local save is prototype-only progression, not an authoritative multiplayer economy. Backend owns future accounts/server state; no shared Supabase projects or production currencies are authorized by this scaffold. Paid compute is limited to the owner's CPU authorization below.
 
 No hooks, timers or automations are enabled by project setup. No Claude settings/memory/skills/handovers may be modified.
+
+## Owner-authorized CPU art resources — 2026-10-05
+
+Owner explicitly authorized Blender, the32GB VPS and Hugging Face Pro32GB CPU option described as$0.03/hour. Use CPU-only bounded jobs; this is not authorization for GPU tiers or persistent open-ended billing. VPS remains the default for test/build/browser/CPU Blender work through its shared queue. HF CPU work may be used when it serves a concrete art task; verify actual current flavor, account, rate and access before submission, estimate cost, set timeout, save/recover artifacts, and stop only your owned resource when done. Do not restart another game's paid Space or overwrite its artifacts.
+
+Relevant maintained Codex skills: blender-procedural-assets (procedural garden/fruit props), blender-automation (CPU exports/reviews),3d-modeling when topology needs review, three-best-practices (runtime), vps-heavy-jobs (queue), installed Hugging Face Jobs/CLI skills (auth/persistence/remoteCPU). Read only skills relevant to the assigned work. For weighted characters, use the appropriate rig-preserving workflow. Pilot one original asset under neutral light and the actual game camera before a batch. Keep .blend sources, GLB exports, hashes and material/scale/triangle receipts separate from device acceptance.
