@@ -1,0 +1,11 @@
+{
+  "name": "Mobile Combat Prototype",
+  "short_name": "Mobile Combat",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#17222b",
+  "theme_color": "#17222b"
+}

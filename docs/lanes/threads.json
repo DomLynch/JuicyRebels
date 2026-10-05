@@ -1,0 +1,62 @@
+{
+  "section": "JUICY REBELS",
+  "sectionId": "d4d5c79f-6579-498b-8d8b-81af16699189",
+  "appProject": "Business (available saved local project; each lane has explicit JuicyRebels path)",
+  "canonicalRepo": "/Users/domininclynch/Desktop/Business/JuicyRebels",
+  "lanes": [
+    {
+      "key": "strategy",
+      "title": "JuicyRebels - Strategy Dev",
+      "contract": "docs/lanes/strategy.md",
+      "threadId": "01a10a3c-c207-7cd0-8980-049a71cd7aa4"
+    },
+    {
+      "key": "lead",
+      "title": "JuicyRebels - Lead Dev",
+      "contract": "docs/lanes/lead.md",
+      "threadId": null
+    },
+    {
+      "key": "ui",
+      "title": "JuicyRebels - Web & UI",
+      "contract": "docs/lanes/ui.md",
+      "threadId": null
+    },
+    {
+      "key": "combat",
+      "title": "JuicyRebels - Combat",
+      "contract": "docs/lanes/combat.md",
+      "threadId": null
+    },
+    {
+      "key": "deploy",
+      "title": "JuicyRebels - Deploy",
+      "contract": "docs/lanes/deploy.md",
+      "threadId": null
+    },
+    {
+      "key": "backend",
+      "title": "JuicyRebels - Backend",
+      "contract": "docs/lanes/backend.md",
+      "threadId": null
+    },
+    {
+      "key": "auditor",
+      "title": "JuicyRebels - Auditor",
+      "contract": "docs/lanes/auditor.md",
+      "threadId": null
+    },
+    {
+      "key": "world-art",
+      "title": "JuicyRebels - World & Art",
+      "contract": "docs/lanes/world-art.md",
+      "threadId": null
+    },
+    {
+      "key": "economy",
+      "title": "JuicyRebels - Economy & Progression",
+      "contract": "docs/lanes/economy.md",
+      "threadId": null
+    }
+  ]
+}
