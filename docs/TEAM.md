@@ -1,11 +1,11 @@
 # JuicyRebels team and file ownership
 
-Strategy Dev is the originating chat. Lead Dev integrates the first playable. Startup for all other roles is read-only intake; no automatic full-team implementation or deployment.
+Strategy Dev is the originating chat. Lead Dev integrates and launches the first playable under the owner's 2026-10-05 instruction. Startup for all other roles is read-only intake; no automatic full-team implementation or deployment.
 
 | Lane | Ownership and outcome |
 | --- | --- |
 | Strategy Dev | Product scope, priorities, acceptance; docs/strategy; owner-facing decisions |
-| Lead Dev | Integration/frame lifecycle, shared runtime interfaces, root package/config/state; first playable candidate |
+| Lead Dev | Integration/frame lifecycle, shared runtime interfaces, root package/config/state; first playable candidate; also Deploy responsibilities for this first Degree Choice launch |
 | Web & UI | Touch adapter, HUD, menus, viewport/zoom/accessibility; index.html, style.css, src/input.js, src/touch.js after allocation |
 | Combat | Weapons, hitscan, assist, direction/effect logic; src/combat.js, src/impact.js and combat tests after allocation |
 | Deploy | Dedicated Juicy VPS paths, immutable packaging, protected-host guards, activation/rollback; ops and docs/deploy |

@@ -8,11 +8,11 @@ Read PROJECT_STATE.md, docs/TEAM.md, your docs/lanes contract, and the matching 
 
 ## Boundaries
 
-- JuicyRebels is its own game. Main ARMAGEDOM, FRONTIERDOM, Frankendom and the existing Test-combat prototype are outside this repo's write scope. No assets, credentials, backend or deployment configuration from those projects may be changed or silently reused.
+- JuicyRebels is its own game. Main ARMAGEDOM, FRONTIERDOM, Frankendom and the existing Test-combat prototype are outside this repo's write scope. No assets, credentials, backend or deployment configuration from those projects may be changed or silently reused. The owner-authorized Degree Choice launch below permits archiving its current served test and changing only that domain's hosting; it does not permit edits to the Test-combat source repository or other games.
 - Accepted independently authored combat18 code is the frozen donor, documented in docs/COMBAT_HANDOFF.md. Preserve its two-thumb controls, full-body facing, walking speed, partial sticky assistance and presentation-only effects unless owner feedback changes them.
 - One integration owner: Lead Dev. Before editing shared files, identify your allocated file ownership in docs/TEAM.md. Do not reset/delete another lane's changes. Strategies and intake reports are not permission for speculative implementations.
 - Current non-Lead lanes start with read-only intake. Lead Dev owns the first playable integration; specialists implement only after an explicit bounded allocation. Coordinate through repo handoffs and user-authorized task messages.
-- Auditor reviews the exact candidate and reports actionable evidence; it does not patch runtime or activate deployments. Deploy alone activates a frozen, reviewed payload. Strategy sets scope/acceptance and reports served versus device evidence separately.
+- Auditor reviews the exact candidate and reports actionable evidence; it does not patch runtime or activate deployments. Deploy owns activation of frozen, reviewed payloads. For the first demo launch explicitly requested on 2026-10-05, Lead Dev is also allocated Deploy responsibilities and may activate Degree Choice after the documented checks; no additional launch permission is required. Strategy sets scope/acceptance and reports served versus device evidence separately.
 
 ## Compute, checks and delivery
 
