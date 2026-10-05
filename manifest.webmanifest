@@ -1,11 +1,1 @@
-{
-  "name": "Mobile Combat Prototype",
-  "short_name": "Mobile Combat",
-  "id": "./",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
-  "background_color": "#17222b",
-  "theme_color": "#17222b"
-}
+{"name":"Juicy Rebels","short_name":"Juicy Rebels","description":"A little garden rescue adventure","start_url":"./","display":"standalone","background_color":"#bedfd3","theme_color":"#2d5948","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}

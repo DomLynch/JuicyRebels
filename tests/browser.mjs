@@ -12,7 +12,7 @@ try {
   const context=await browser.newContext({viewport:{width:844,height:390},hasTouch:true,isMobile:true,deviceScaleFactor:1,...(process.env.CAPTURE_VIDEO ? {recordVideo:{dir:'artifacts/video',size:{width:844,height:390}}}:{})});
   const page=await context.newPage(), errors=[];
   page.on('pageerror',e=>errors.push(e.message)); page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-  await page.goto(process.env.TEST_URL || 'http://127.0.0.1:4187',{waitUntil:'networkidle'});
+  await page.goto(process.env.TEST_URL || 'http://127.0.0.1:4187/lab.html',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>window.__combat?.snapshot().started);
   const snapshot=()=>page.evaluate(()=>window.__combat.snapshot());
   const advance=async seconds=>{const end=(await snapshot()).simTime+seconds; await page.waitForFunction(t=>window.__combat.snapshot().simTime>=t,end,{timeout:15000});};
@@ -180,7 +180,7 @@ try {
   await page.screenshot({path:'artifacts/impact-rifle.png'});await reset();after=await snapshot();assert.equal(after.effects.cameraAmplitude,0);assert.equal(after.effects.slide,0);
   results.push('Universal impact: recoil/pistol slide, local hit/kill stop, victim flinch/burst, bounded camera/audio/pool; High/Low/Off and reset; movement/fire continue during hits');
   const reducedContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'}), reducedPage=await reducedContext.newPage();
-  await reducedPage.goto(process.env.TEST_URL||'http://127.0.0.1:4187');await reducedPage.waitForFunction(()=>window.__combat?.snapshot().started);assert.equal(await reducedPage.evaluate(()=>window.__combat.snapshot().effects.level),'low');await reducedContext.close();
+  await reducedPage.goto(process.env.TEST_URL||'http://127.0.0.1:4187/lab.html');await reducedPage.waitForFunction(()=>window.__combat?.snapshot().started);assert.equal(await reducedPage.evaluate(()=>window.__combat.snapshot().effects.level),'low');await reducedContext.close();
   assert.deepEqual(errors,[]);results.push('Resize cancels held controls; landscape/portrait HUD fits with no runtime/console errors');
   await writeFile('artifacts/browser-result.json',JSON.stringify({pass:true,results,snapshot:await snapshot()},null,2));console.log(JSON.stringify({pass:true,results},null,2));await context.close();
 } finally {if(browser)await browser.close();server.kill();}

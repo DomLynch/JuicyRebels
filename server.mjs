@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 const root = fileURLToPath(new URL('.', import.meta.url));
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml' };
 const port = Number(process.env.PORT || 4173);
 http.createServer(async (req, res) => {
   try {
@@ -13,4 +13,4 @@ http.createServer(async (req, res) => {
     const data = await readFile(filename);
     res.writeHead(200, { 'Content-Type': types[path.extname(filename)] || 'application/octet-stream', 'Cache-Control': 'no-store' }); res.end(data);
   } catch { res.writeHead(404).end('Not found'); }
-}).listen(port, '0.0.0.0', () => console.log(`Combat lab: http://localhost:${port}`));
+}).listen(port, '0.0.0.0', () => console.log(`Juicy Rebels: http://localhost:${port}`));

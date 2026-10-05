@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GardenMission, readGarden, purchase, SHOP } from './garden.js?v=juicy-1';
 import { WeaponState, worldVector, followAngle, aimAssist, StickyAim, targetOnRay, rayCircle } from './combat.js?v=combat-18';
 import { createCombatAudio } from './audio.js?v=combat-18';
 import { installTouchGuards } from './touch.js?v=combat-18';
@@ -10,13 +9,6 @@ import { ImpactFeedback, HitReaction } from './impact.js?v=combat-18';
 const effects = new ImpactFeedback(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'low' : 'high');
 const $ = id => document.getElementById(id);
 const canvas = $('game');
-const SAVE_KEY = 'juicy-rebels-garden-v1';
-let storageAvailable = true, savedGarden;
-try { savedGarden = readGarden(localStorage.getItem(SAVE_KEY)); } catch { storageAvailable = false; savedGarden = readGarden(null); }
-const mission = new GardenMission(savedGarden);
-let waveDelay = 0;
-function saveGarden() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(mission.garden)); } catch { storageAvailable = false; } }
-
 installTouchGuards();
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'low-power' }); }
@@ -24,7 +16,7 @@ catch { $('welcome').classList.remove('hidden'); $('welcome').innerHTML = '<div 
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
-const scene = new THREE.Scene(); scene.background = new THREE.Color('#bedfd3');
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#17222b');
 const camera = new THREE.OrthographicCamera(-20, 20, 14, -14, 0.1, 80);
 const cameraYaw = Math.PI / 4;
 const cameraOffset = new THREE.Vector3(18, 22, 18);
@@ -52,68 +44,11 @@ function material(color) { return materials[color] ||= new THREE.MeshLambertMate
 function box(parent, color, x, y, z, sx, sy, sz) {
   const mesh = new THREE.Mesh(unitBox, material(color)); mesh.position.set(x, y, z); mesh.scale.set(sx, sy, sz); mesh.castShadow = true; parent.add(mesh); return mesh;
 }
-const roundGeometry = new THREE.SphereGeometry(1, 12, 8);
-function fruit(parent, color, x, y, z, sx, sy = sx, sz = sx) {
-  const mesh = new THREE.Mesh(roundGeometry, material(color)); mesh.position.set(x,y,z); mesh.scale.set(sx,sy,sz); mesh.castShadow = true; parent.add(mesh); return mesh;
-}
-const floor = box(scene, '#94c979', 0, -0.5, 0, 28, 1, 28); floor.receiveShadow = true; floor.castShadow = false;
-box(scene, '#749c65',0,-1.2,0,27,0.8,27);
-for (const side of [-1,1]) {
-  for(let n=-13;n<=13;n+=2) {
-    box(scene,'#ffefc1',side*13.8,0.7,n,0.18,1.4,0.18);
-    box(scene,'#ffefc1',n,0.7,side*13.8,0.18,1.4,0.18);
-  }
-  box(scene,'#e6c99c',side*13.8,0.65,0,0.12,0.18,28);
-  box(scene,'#e6c99c',0,0.65,side*13.8,28,0.18,0.12);
-}
-for(let n=-10;n<=10;n+=2) {
-  const stone=fruit(scene,'#e6d6ad',n,0.035,7.5,0.85,0.07,0.6); stone.receiveShadow=true;
-}
-function flower(parent,x,z,color='#ffb3c3') {
-  box(parent,'#548f50',x,0.3,z,0.06,0.55,0.06);
-  for(let k=0;k<5;k++) fruit(parent,color,x+Math.cos(k*1.256)*0.16,0.6,z+Math.sin(k*1.256)*0.16,0.13,0.07,0.13);
-  fruit(parent,'#ffe79a',x,0.67,z,0.09);
-}
-for(const x of [-10,10]) for(const z of [-9,0,9]) {
-  box(scene,'#d2aa7f',x,0.2,z,2.9,0.4,2.7);
-  box(scene,'#85694f',x,0.42,z,2.6,0.06,2.4);
-  for(let i=0;i<4;i++) flower(scene,x-0.7+(i%2)*1.4,z-0.6+Math.floor(i/2)*1.2,i%2?'#fff09f':'#ffb3c3');
-}
-for(const x of [-11,11]) for(const z of [-12,12]) {
-  box(scene,'#ad8058',x,1,z,0.35,2,0.35);
-  fruit(scene,'#65ac69',x,2.3,z,1.25,1.45,1.25);
-  fruit(scene,'#a4ce75',x+0.6,2.6,z-0.2,0.8);
-  for(let i=0;i<3;i++) fruit(scene,'#ffc18d',x+Math.cos(i*2.1)*0.85,2.3,z+Math.sin(i*2.1)*0.85,0.22);
-}
-function batchStatic(parent) {
-  const batches=new Map();
-  for(const mesh of [...parent.children]) {
-    if(!mesh.isMesh)continue;
-    const key=[mesh.geometry.uuid,mesh.material.uuid,mesh.castShadow,mesh.receiveShadow].join(':');
-    if(!batches.has(key))batches.set(key,[]);batches.get(key).push(mesh);
-  }
-  for(const meshes of batches.values()) {
-    const base=meshes[0],batch=new THREE.InstancedMesh(base.geometry,base.material,meshes.length);
-    batch.castShadow=base.castShadow;batch.receiveShadow=base.receiveShadow;
-    meshes.forEach((mesh,i)=>{mesh.updateMatrix();batch.setMatrixAt(i,mesh.matrix);parent.remove(mesh);});parent.add(batch);
-    batch.computeBoundingSphere();
-  }
-}
-batchStatic(scene);
-const rescuedPlant = new THREE.Group(); scene.add(rescuedPlant); rescuedPlant.position.set(0,0,-1);
-fruit(rescuedPlant,'#d7a378',0,0.3,0,0.8,0.35,0.8);
-box(rescuedPlant,'#558d46',0,0.9,0,0.12,1,0.12);
-fruit(rescuedPlant,'#b8dc79',-0.35,1.1,0,0.5,0.15,0.22).rotation.z=-0.4;
-fruit(rescuedPlant,'#70b669',0.35,1.3,0,0.5,0.15,0.22).rotation.z=0.4;
-fruit(rescuedPlant,'#ffd27a',0,1.6,0,0.35);
-const boughtFlowers=new THREE.Group();scene.add(boughtFlowers);
-for(let i=0;i<9;i++) flower(boughtFlowers,-4+(i%3)*0.7,6+Math.floor(i/3)*0.7);
-batchStatic(boughtFlowers);
-const lantern=new THREE.Group();scene.add(lantern);lantern.position.set(3,0,6.7);
-box(lantern,'#87644b',0,0.8,0,0.12,1.6,0.12);
-box(lantern,'#87644b',0.3,1.6,0,0.7,0.1,0.12);
-fruit(lantern,'#ffbe87',0.6,1.25,0,0.35,0.4,0.35);
-box(lantern,'#8aac67',0.6,1.66,0,0.18,0.12,0.1);
+const floor = box(scene, '#657078', 0, -0.4, 0, 28, 0.8, 28); floor.receiveShadow = true; floor.castShadow = false;
+const grid = new THREE.GridHelper(28, 14, '#85939a', '#73818a'); grid.position.y = 0.015; scene.add(grid);
+for (const x of [-14, 14]) { box(scene, '#3f4d59', x, 0.3, 0, 0.3, 0.6, 28); box(scene, '#d5ac58', x, 0.62, 0, 0.32, 0.04, 28); }
+for (const z of [-14, 14]) { box(scene, '#3f4d59', 0, 0.3, z, 28, 0.6, 0.3); box(scene, '#d5ac58', 0, 0.62, z, 28, 0.04, 0.32); }
+for (const x of [-13.7, 13.7]) for (const z of [-13.7, 13.7]) box(scene, '#364756', x, 1, z, 0.65, 2, 0.65);
 const player = new THREE.Group(); scene.add(player);
 const legs = new THREE.Group(); player.add(legs);
 function makeLeg(x) {
@@ -126,25 +61,20 @@ function makeLeg(x) {
 const leftLeg = makeLeg(-0.19), rightLeg = makeLeg(0.19);
 box(legs, '#394c5f', 0, 0.77, 0, 0.58, 0.23, 0.38);
 const torso = new THREE.Group(); player.add(torso);
-const jacket = box(torso, '#f3be69', 0, 1.15, 0, 0.67, 0.63, 0.43);
+box(torso, '#6faaa1', 0, 1.15, 0, 0.67, 0.63, 0.43);
 box(torso, '#304a52', 0, 1.13, -0.25, 0.53, 0.43, 0.13);
 box(torso, '#49616c', 0, 1.16, 0.29, 0.43, 0.46, 0.2);
 box(torso, '#e4b99b', 0, 1.49, 0, 0.18, 0.18, 0.2);
 const head = new THREE.Mesh(new THREE.SphereGeometry(0.245, 12, 8), material('#e4b99b')); head.position.set(0, 1.72, -0.01); head.castShadow = true; torso.add(head);
-fruit(torso,'#f6d491',0,1.88,0,0.47,0.08,0.47);
-fruit(torso,'#f6d491',0,2,0,0.29,0.24,0.29);
-fruit(torso,'#77ac65',0.27,2.12,0,0.18,0.07,0.09);
-for(const x of [-0.095,0.095]) fruit(torso,'#263e35',x,1.75,-0.225,0.025);
-
+box(torso, '#253c46', 0, 1.89, 0.015, 0.43, 0.16, 0.4);
 box(torso, '#6faaa1', -0.34, 1.27, -0.15, 0.19, 0.24, 0.36).rotation.y = -0.5;
 box(torso, '#6faaa1', 0.38, 1.24, -0.19, 0.2, 0.23, 0.42);
 box(torso, '#e4b99b', -0.1, 1.22, -0.43, 0.37, 0.14, 0.17);
 box(torso, '#e4b99b', 0.28, 1.22, -0.49, 0.15, 0.14, 0.19);
 const gun = new THREE.Group(); torso.add(gun);
-const barrel = box(gun, '#6578cb', 0.25, 1.25, -0.76, 0.17, 0.16, 0.95);
-const slide = box(gun, '#ffc295', 0.25, 1.37, -0.55, 0.22, 0.08, 0.38); slide.visible = false;
-const fruitTank=fruit(gun,'#647ad6',0.25,1.45,-0.65,0.27,0.24,0.3);
-fruit(gun,'#90bc70',0.25,1.69,-0.65,0.12,0.035,0.07);
+const barrel = box(gun, '#202b33', 0.25, 1.25, -0.76, 0.17, 0.16, 0.95);
+const slide = box(gun, '#7f929c', 0.25, 1.37, -0.55, 0.22, 0.08, 0.38); slide.visible = false;
+box(gun, '#51616c', 0.25, 1.25, -0.46, 0.23, 0.2, 0.35);
 box(gun, '#202b33', 0.25, 1.08, -0.46, 0.13, 0.23, 0.16);
 const flash = box(gun, '#fff1b5', 0.25, 1.25, -1.32, 0.25, 0.22, 0.27); flash.material = new THREE.MeshBasicMaterial({ color: '#fff1b5' }); flash.castShadow = false; flash.visible = false;
 const gunRest = new THREE.Vector3(0.25, 1.2, -0.46);
@@ -157,34 +87,22 @@ box(reticle, '#a9f9d0', 0, 0.03, 0, 0.025, 0.025, 0.65).castShadow = false;
 box(reticle, '#a9f9d0', 0, 0.03, 0, 0.65, 0.025, 0.025).castShadow = false;
 const sightGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
 const sight = new THREE.Line(sightGeometry, new THREE.LineBasicMaterial({ color: '#597e72', transparent: true, opacity: 0.7 })); scene.add(sight);
-const targets = Array.from({length:4},(_,i)=>{
-  const group=new THREE.Group();scene.add(group);group.visible=false;
-  const pivot=new THREE.Group();pivot.position.y=0.78;group.add(pivot);
-  const reaction=new HitReaction();
-  const bodyMaterial=new THREE.MeshLambertMaterial({color:'#ba78db'});
-  const body=new THREE.Mesh(roundGeometry,bodyMaterial);body.scale.set(0.55,0.55,0.48);body.castShadow=true;pivot.add(body);
-  const ears=[-0.3,0.3].map(x=>fruit(pivot,'#d3a3e8',x,0.5,0,0.16,0.38,0.14));
-  const shell=fruit(pivot,'#ffd098',0,0.25,0.2,0.5,0.45,0.5);
-  const leaves=[-1,1].map(k=>fruit(pivot,'#a9d77b',k*0.38,0.32,0,0.38,0.1,0.2));
-  for(const x of [-0.18,0.18]) {fruit(pivot,'#fff4de',x,0.08,-0.42,0.14);fruit(pivot,'#283e37',x,0.08,-0.54,0.065);}
-  const health=box(group,'#fff1a5',0,1.85,0,1,0.065,0.07);health.rotation.y=cameraYaw;health.castShadow=false;
-  return {group,pivot,reaction,bodyMaterial,health,ears,shell,leaves,hp:0,x:0,z:0,flash:0,moving:false,down:0,maxHp:100,type:''};
+const targetPositions = [[0, -8], [-7, -6], [7, -6], [-9, 2], [9, 2], [-5, 8], [5, 8]];
+const targets = targetPositions.map(([x, z], i) => {
+  const group = new THREE.Group(); scene.add(group); group.position.set(x, 0, z);
+  const bodyMaterial = new THREE.MeshLambertMaterial({ color: '#d98e7d' });
+  box(group, '#354654', 0, 0.08, 0, 1.1, 0.16, 1.1);
+  box(group, '#596b76', 0, 0.43, 0, 0.2, 0.6, 0.2);
+  const reaction = new HitReaction(), pivot = new THREE.Group(); pivot.position.y = 0.78; group.add(pivot);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.42, 0.95, 12), bodyMaterial); body.position.y = 0.34; body.castShadow = true; pivot.add(body);
+  box(pivot, '#ffe2cf', 0, 0.94, 0, 0.4, 0.35, 0.4);
+  const health = box(group, '#a9f9d0', 0, 2.12, 0, 1, 0.065, 0.07); health.rotation.y = cameraYaw; health.castShadow = false;
+  return { group, pivot, reaction, bodyMaterial, health, x, z, baseX: x, baseZ: z, hp: 100, down: 0, flash: 0, moving: i === 6 };
 });
-function syncMobs(fresh=false) {
-  for(let i=0;i<targets.length;i++) {
-    const t=targets[i],m=mission.mobs[i];
-    if(!m){t.hp=0;t.group.visible=false;continue;}
-    Object.assign(t,{x:m.x,z:m.z,hp:m.hp,maxHp:m.maxHp,type:m.type});
-    t.group.position.set(t.x,0,t.z);
-    if(fresh){t.reaction.reset();t.flash=0;}
-    t.ears.forEach(e=>e.visible=m.type==='hopper');t.shell.visible=m.type==='snail';t.leaves.forEach(e=>e.visible=m.type==='skitter');
-  }
-}
 const tracers = Array.from({ length: 16 }, () => {
   const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: '#ffe3a2' })); line.visible = false; scene.add(line);
-  const pellet=fruit(scene,'#6c83e0',0,0,0,0.16);pellet.visible=false;pellet.castShadow=false;
-  return { line, pellet, remaining: 0, distance:0, dx:0, dz:0, x:0, z:0 };
+  return { line, remaining: 0 };
 });
 // One instanced draw and a fixed pool; no particle allocation on impact.
 const particleMesh = new THREE.InstancedMesh(unitBox, new THREE.MeshBasicMaterial({ color: '#ffffff' }), 48);
@@ -218,10 +136,9 @@ function tickParticles(dt) {
 function clearEffects() {
   effects.reset(); flashTime = hitMarkerTime = 0; flash.visible = false; gun.position.copy(gunRest); gun.rotation.x = 0; slide.position.z = slideRestZ;
   for (const t of targets) { t.reaction.reset(); t.pivot.rotation.set(0, 0, 0); t.pivot.position.set(0, 0.78, 0); }
-  for(const tracer of tracers){tracer.remaining=0;tracer.line.visible=tracer.pellet.visible=false;}
   for (const p of particles) p.life = 0; activeParticles = 0; particleMesh.visible = false;
 }
-let tracerIndex = 0, started = false, angle = 0, aimX = 0, aimZ = -1, flashTime = 0, shots = 0, hits = 0, kills = 0, elapsed = 0, previousTime = 0, hudTime = 0, feedbackTime = 0;
+let tracerIndex = 0, started = true, angle = 0, aimX = 0, aimZ = -1, flashTime = 0, shots = 0, hits = 0, kills = 0, elapsed = 0, previousTime = 0, hudTime = 0, feedbackTime = 0;
 const aimOffset = new THREE.Vector2(0, -5);
 const audio = createCombatAudio();
 let targetIndex = -1, lastHitX = 0, lastHitZ = 0;
@@ -236,7 +153,7 @@ function reload() {
   updateHud();
 }
 function swap() { if (!started) return; weapons.swap(); clearEffects(); updateWeaponModel(); }
-function updateWeaponModel() { fruitTank.material=material(weapons.index?'#ffb893':'#647ad6'); barrel.material=material(weapons.index?'#ef9c85':'#6578cb'); barrel.scale.z = weapons.index ? 0.5 : 0.95; barrel.position.z = (weapons.index ? -0.6 : -0.76) - gunRest.z; slide.visible = weapons.index === 1; flash.position.z = (weapons.index ? -0.96 : -1.32) - gunRest.z; }
+function updateWeaponModel() { barrel.scale.z = weapons.index ? 0.5 : 0.95; barrel.position.z = (weapons.index ? -0.6 : -0.76) - gunRest.z; slide.visible = weapons.index === 1; flash.position.z = (weapons.index ? -0.96 : -1.32) - gunRest.z; }
 const input = createInput(canvas, reload, swap);
 bindAction($('reload'), reload); bindAction($('swap'), swap);
 $('assist').onclick = () => { assistEnabled = !assistEnabled; stickyAim.reset(); $('assist').textContent = assistEnabled ? 'Assist: +50%' : 'Assist: OFF'; $('assist').setAttribute('aria-pressed', String(assistEnabled)); };
@@ -246,11 +163,11 @@ $('effects').onclick = () => { const next = { high: 'low', low: 'off', off: 'hig
 updateEffectsButton();
 window.addEventListener('blur', clearEffects); document.addEventListener('visibilitychange', () => { if (document.hidden) clearEffects(); });
 $('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); } catch { showFeedback('Full screen unavailable in this browser'); } };
-function resetRuntime() {
+$('reset').onclick = () => {
   input.clear(); stickyAim.reset(); weapons.reset(); player.position.set(0, 0, 3); shots = hits = kills = elapsed = 0; aimX = 0; aimZ = -1; aimOffset.set(0, -5); angle = 0; targetIndex = -1; previousMoveAngle = steeringAngle = null; movementFacing = false; player.rotation.y = 0; flashTime = hitMarkerTime = 0; clearEffects();
   updateWeaponModel(); for (const t of targets) { t.hp = 100; t.down = t.flash = 0; t.group.visible = true; }
-  for (const t of tracers) { t.remaining = 0; t.line.visible = false; t.pellet.visible=false; } updateCamera(0, true); showFeedback('');
-}
+  for (const t of tracers) { t.remaining = 0; t.line.visible = false; } updateCamera(0, true); showFeedback('Range reset');
+};
 player.position.z = 3;
 function showFeedback(message) { $('feedback').textContent = message; feedbackTime = 0.7; }
 function resize() {
@@ -285,8 +202,8 @@ function shoot(moving) {
   const wall = Math.min(wallX, wallZ);
   if (wall < distance) { distance = wall; hitTarget = null; }
   if (hitTarget) {
-    hits++; mission.hit(targets.indexOf(hitTarget), weapons.weapon.damage); hitTarget.hp=mission.mobs[targets.indexOf(hitTarget)].hp; hitTarget.flash = 0.1;
-    if (!hitTarget.hp) { kills++; hitTarget.down = 0; showFeedback('GARDEN FRIEND RESCUED!'); }
+    hits++; hitTarget.hp = Math.max(0, hitTarget.hp - weapons.weapon.damage); hitTarget.flash = 0.1;
+    if (!hitTarget.hp) { kills++; hitTarget.down = 2; showFeedback('TARGET DOWN'); }
     lastHitX = hitTarget.x; lastHitZ = hitTarget.z;
     hitMarkerTime = 0.2; $('hit-marker').classList.toggle('kill', !hitTarget.hp); audio.hit(!hitTarget.hp, effects.level);
     $('hit-marker').textContent = effects.level === 'high' ? hitTarget.hp ? 'HIT' : 'DOWN' : '×';
@@ -294,14 +211,14 @@ function shoot(moving) {
     effects.hit(!hitTarget.hp, dx, dz); hitTarget.reaction.hit(dx, dz, !hitTarget.hp, effects.level);
     burst(player.position.x + dx * distance, player.position.z + dz * distance, dx, dz, !hitTarget.hp);
   }
-  const tracer = tracers[tracerIndex++ % tracers.length]; tracer.remaining = 0.14; tracer.line.visible = true; tracer.distance=distance;tracer.dx=dx;tracer.dz=dz;tracer.x=player.position.x;tracer.z=player.position.z;tracer.pellet.material=material(weapons.index?'#ffad89':'#6c83e0');tracer.pellet.scale.setScalar(weapons.index?0.23:0.16);
+  const tracer = tracers[tracerIndex++ % tracers.length]; tracer.remaining = 0.065; tracer.line.visible = true;
   // Close impacts lie before the barrel; keep their tracer on the hit segment.
   const beforeMuzzle = distance < (muzzle.x - player.position.x) * dx + (muzzle.z - player.position.z) * dz;
   setLine(tracer.line, beforeMuzzle ? player.position.x : muzzle.x, 1.25, beforeMuzzle ? player.position.z : muzzle.z, player.position.x + dx * distance, 1.25, player.position.z + dz * distance);
 }
 function updateHud() {
-  $('status').textContent = weapons.reloadRemaining ? `${weapons.index ? 'Peach Popper' : 'Blueberry Blaster'} · RELOADING ${weapons.reloadRemaining.toFixed(1)}s` : `${weapons.index ? 'Peach Popper' : 'Blueberry Blaster'} · ${weapons.ammo[weapons.index]} / ${weapons.weapon.capacity}`;
-  $('swap').textContent = weapons.index ? 'BLUEBERRY' : 'PEACH';
+  $('status').textContent = weapons.reloadRemaining ? `${weapons.weapon.name} · RELOADING ${weapons.reloadRemaining.toFixed(1)}s` : `${weapons.weapon.name} · ${weapons.ammo[weapons.index]} / ${weapons.weapon.capacity}`;
+  $('swap').textContent = weapons.index ? 'RIFLE' : 'PISTOL';
   const reloading = weapons.reloadRemaining > 0;
   $('fire-right').classList.toggle('reloading', reloading);
   $('fire-label').textContent = reloading ? 'RELOAD' : 'FIRE';
@@ -309,8 +226,7 @@ function updateHud() {
   $('reload-ring').style.strokeDashoffset = String(reloading ? 100 * weapons.reloadRemaining / weapons.weapon.reload : 100);
   $('reload').textContent = reloading ? 'RELOADING…' : 'RELOAD';
   $('reload').classList.toggle('held', reloading);
-  $('stats').textContent = started ? `♥ ${mission.hp}   ·   ${Math.ceil(mission.remaining)}s   ·   Wave ${mission.wave}/3   ·   Rescued ${mission.rescued}/12` : `Your garden · ${mission.garden.seeds} seeds · ${mission.garden.wins} rescues`;
-  $('health-fill').style.width=`${mission.hp ?? 100}%`;
+  $('stats').textContent = `Hits ${hits} · Shots ${shots} · Accuracy ${shots ? Math.round(hits / shots * 100) + '%' : '—'} · Down ${kills}`;
 }
 renderer.setAnimationLoop(time => {
   const dt = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 0; previousTime = time;
@@ -318,13 +234,13 @@ renderer.setAnimationLoop(time => {
     const wasReloading = weapons.reloadRemaining > 0;
     elapsed += dt; weapons.tick(dt); effects.tick(dt);
     if (wasReloading && !weapons.reloadRemaining) { showFeedback('RELOADED'); updateHud(); }
-    mission.tick(dt,player.position.x,player.position.z);syncMobs();
-    if(mission.phase==='lost') finishMission();
-    if(mission.phase==='playing' && mission.mobs.every(m=>m.hp<=0)) {
-      waveDelay+=dt;
-      if(waveDelay>=0.65) {waveDelay=0;mission.completeWave();stickyAim.reset();syncMobs(true);if(mission.phase==='won')finishMission();else showFeedback(`WAVE ${mission.wave} · KEEP THE GARDEN GROWING!`);}
-    } else waveDelay=0;
-    for(const target of targets){target.reaction.tick(dt);target.group.visible=target.hp>0||target.reaction.energy>0.08;}
+    // Update opponent positions before aiming so marker and model share this frame.
+    for (const target of targets) {
+      if (target.down > 0) { target.down -= dt; if (target.down <= 0) { target.hp = 100; target.reaction.reset(); } }
+      target.reaction.tick(dt); target.group.visible = target.hp > 0 || target.reaction.energy > 0.08;
+      if (target.moving) target.x = target.baseX + Math.sin(elapsed * 0.9) * 2;
+      target.group.position.x = target.x;
+    }
     const keys = input.keys;
     let mx = input.move.x, my = input.move.y;
     if (keys.size) { mx += Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft')); my += Number(keys.has('KeyS') || keys.has('ArrowDown')) - Number(keys.has('KeyW') || keys.has('ArrowUp')); }
@@ -373,7 +289,7 @@ renderer.setAnimationLoop(time => {
     player.rotation.y = angle;
 
     player.updateMatrixWorld(true);
-    if (started && (input.fires.size || input.firePressed)) shoot(moving);
+    if (input.fires.size || input.firePressed) shoot(moving);
     input.firePressed = false;
     gun.position.copy(gunRest); gun.position.z += effects.recoil * (weapons.index ? 0.5 : 0.34);
     gun.rotation.x = effects.recoil * (weapons.index ? 0.22 : 0.14); slide.position.z = slideRestZ + effects.slide * 0.22;
@@ -402,20 +318,19 @@ renderer.setAnimationLoop(time => {
     setLine(sight, player.position.x, 1.25, player.position.z, reticle.position.x, 1.25, reticle.position.z);
     for (const target of targets) {
       target.flash = Math.max(0, target.flash - dt);
-      target.bodyMaterial.color.set(target.flash ? '#fff3dd' : ({hopper:'#ba78db',snail:'#e8a054',skitter:'#73bca0'}[target.type] || '#ba78db')); target.health.scale.x = target.hp / target.maxHp;target.health.visible=target.hp>0;
+      target.bodyMaterial.color.set(target.flash ? '#fff3dd' : '#d98e7d'); target.health.scale.x = target.hp / 100;
       const reaction = target.reaction, lean = reaction.energy * (reaction.killed ? 0.9 : 0.45);
       target.pivot.rotation.set(reaction.z * lean, 0, -reaction.x * lean);
-      target.pivot.position.set(reaction.x * reaction.energy * 0.16, 0.78 + (target.type==='hopper' && target.hp>0 ? Math.max(0,Math.sin(elapsed*5))*0.22:0) - (reaction.killed ? (1 - reaction.energy) * 0.5 : 0), reaction.z * reaction.energy * 0.16);
+      target.pivot.position.set(reaction.x * reaction.energy * 0.16, 0.78 - (reaction.killed ? (1 - reaction.energy) * 0.5 : 0), reaction.z * reaction.energy * 0.16);
     }
-    for (const tracer of tracers) { tracer.remaining = Math.max(0, tracer.remaining - dt); tracer.line.visible = tracer.remaining > 0;tracer.pellet.visible=tracer.remaining>0;const d=tracer.distance*(1-tracer.remaining/0.14);tracer.pellet.position.set(tracer.x+tracer.dx*d,1.25,tracer.z+tracer.dz*d); }
+    for (const tracer of tracers) { tracer.remaining = Math.max(0, tracer.remaining - dt); tracer.line.visible = tracer.remaining > 0; }
     feedbackTime = Math.max(0, feedbackTime - dt); if (!feedbackTime) $('feedback').textContent = '';
     hudTime += dt; if (hudTime > 0.08) { updateHud(); hudTime = 0; }
   }
-  if(!started){rescuedPlant.rotation.y=Math.sin(time/2000)*0.15;updateCamera(0.016);}
   renderer.render(scene, camera);
 });
 updateHud();
-canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); input.clear(); clearEffects(); started = false; $('garden-title').textContent='Graphics paused';$('garden-copy').textContent='Reload this page to resume your garden.';$('garden-panel').classList.remove('hidden'); });
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); input.clear(); clearEffects(); started = false; showFeedback('Graphics paused. Reload this page to resume.'); });
 // Read-only diagnostics used by real browser checks; no test input bypass.
 window.__combat = {
   snapshot() {
@@ -427,33 +342,3 @@ window.__combat = {
 };
 window.addEventListener('pagehide', () => { input.clear(); clearEffects(); renderer.setAnimationLoop(null); });
 window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
-
-function refreshGarden() {
-  boughtFlowers.visible=mission.garden.owned.includes('flowers');lantern.visible=mission.garden.owned.includes('lantern');
-  jacket.material=material(mission.garden.owned.includes('outfit')?'#737dd1':'#f3be69');
-  $('seed-count').textContent=`${mission.garden.seeds} seeds`;
-  $('save-note').textContent=storageAvailable?'Saved on this device':'Garden cannot save on this device. You can still play.';
-  $('next-adventure').disabled=mission.garden.wins<2;
-  $('next-adventure').textContent=mission.garden.wins<2?`Peach Grove · ${mission.garden.wins}/2 rescues`:'Play Peach Grove →';
-  for(const item of SHOP){const button=$('buy-'+item.id),owned=mission.garden.owned.includes(item.id);button.disabled=owned||mission.garden.seeds<item.cost;button.textContent=owned?'Planted ✓':`${item.cost} seeds`;if(item.id==='outfit'&&owned)button.textContent='Wearing ✓';}
-}
-function startMission(adventure=0) {
-  resetRuntime();if(!mission.start(adventure))return;
-  waveDelay=0;syncMobs(true);started=true;input.clear();clearEffects();
-  $('garden-panel').classList.add('hidden');document.body.classList.add('playing');$('objective').textContent=adventure?'Peach Grove · rescue the golden sprout':'Wildflower Garden · rescue the little sprout';
-  showFeedback('RESCUE THE SPROUT · CLEAR 3 WAVES');updateHud();
-}
-function finishMission() {
-  started=false;input.clear();stickyAim.reset();clearEffects();
-  saveGarden();refreshGarden();document.body.classList.remove('playing');
-  $('garden-title').textContent=mission.phase==='won'?'A little sweeter!':'One more try?';
-  $('garden-copy').textContent=mission.phase==='won'?`You rescued the sprout! +${mission.reward} seeds. Grow your garden, or head back for another rescue.`:(mission.hp===0?'The rascals got too close. Keep moving, turn toward them, and hold FIRE.':'Time ran out. Clear all three waves before the 90 seconds are up.');
-  $('play').textContent=mission.phase==='won'?'Rescue again →':'Try again →';
-  $('garden-panel').classList.remove('hidden');updateHud();
-}
-$('play').onclick=()=>startMission(mission.phase==='lost'?mission.adventure:0);
-$('next-adventure').onclick=()=>startMission(1);
-$('reset').onclick=()=>{resetRuntime();mission.home();started=false;syncMobs();document.body.classList.remove('playing');$('garden-title').textContent='Small garden. Big adventure.';$('garden-copy').textContent='Mischievous rascals are after your little sprout. Grab a fruit blaster, rescue the garden, and make it your own.';$('play').textContent='Play garden rescue →';$('garden-panel').classList.remove('hidden');refreshGarden();updateHud();};
-for(const item of SHOP)$('buy-'+item.id).onclick=()=>{if(purchase(mission.garden,item.id)){saveGarden();refreshGarden();updateHud();}};
-window.__juicy={snapshot(){return {phase:mission.phase,hp:mission.hp??100,remaining:mission.remaining??90,wave:mission.wave??0,rescued:mission.rescued??0,adventure:mission.adventure,reward:mission.reward??0,garden:JSON.parse(JSON.stringify(mission.garden)),storageAvailable,appearance:{flowers:boughtFlowers.visible,lantern:lantern.visible,outfit:mission.garden.owned.includes('outfit')},mobs:mission.mobs.map(m=>({...m})),...window.__combat.snapshot()};}};
-refreshGarden();updateHud();

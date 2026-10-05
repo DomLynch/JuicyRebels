@@ -3,37 +3,60 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#13191e">
+  <meta name="theme-color" content="#2d5948">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
-  <title>Mobile Combat Prototype</title>
-  <meta name="description" content="A simple mobile combat prototype with full-body 360-degree movement, aiming and shooting.">
-  <meta name="application-name" content="Mobile Combat Prototype">
-  <meta name="apple-mobile-web-app-title" content="Mobile Combat Prototype">
-  <link rel="icon" href="data:,">
+  <title>Juicy Rebels — A little garden adventure</title>
+  <meta name="description" content="Fruit blasters, mischievous creatures and a garden to grow. Play a 90-second Juicy Rebels rescue, earn seeds and make your little garden bloom.">
+  <meta name="application-name" content="Juicy Rebels">
+  <meta name="apple-mobile-web-app-title" content="Juicy Rebels">
+  <meta property="og:title" content="Juicy Rebels — A little garden adventure">
+  <meta property="og:description" content="Rescue a sprout. Pop a peach. Grow something lovely.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://degree-choice.com/icon.svg">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="stylesheet" href="./style.css">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+  <script>if(new URLSearchParams(location.search).has('lab'))location.replace('./lab.html');</script>
 </head>
 <body>
-  <canvas id="game" aria-label="3D isometric weapon test arena"></canvas>
+  <canvas id="game" aria-label="Isometric Juicy Rebels garden rescue"></canvas>
   <header>
-    <div><strong>MOBILE COMBAT</strong><small>IMPACT / 18</small></div>
-    <div id="status" aria-live="polite">RIFLE · 30 / 30</div>
-    <button id="reset">Reset</button>
+    <div class="brand"><strong>JUICY <span>REBELS</span></strong><small>A LITTLE GARDEN ADVENTURE</small></div>
+    <div id="status" aria-live="polite">Blueberry Blaster · 30 / 30</div>
+    <button id="reset">Garden</button>
   </header>
-  <div id="stats">Hits 0 · Shots 0 · Accuracy —</div>
+  <div id="stats">Your garden</div>
+  <div class="health-track" aria-hidden="true"><div id="health-fill"></div></div>
+  <div id="objective">Wildflower Garden · rescue the little sprout</div>
   <div id="feedback" aria-live="polite"></div>
   <div class="options"><button id="assist" aria-pressed="true">Assist: +50%</button><button id="effects">FX: High</button><button id="sound" aria-pressed="true">Sound: ON</button><button id="fullscreen">Full screen</button></div>
   <div class="stick" id="move" role="group" aria-label="Movement and targeting joystick"><span class="stick-label">MOVE + AIM</span><div class="knob"></div></div>
-  <div id="aim-overlays"><div id="aim-edge" class="hidden" aria-hidden="true">➤</div>
-  <div id="target-marker" class="hidden" aria-hidden="true">▼</div>
-  <div id="hit-marker" aria-hidden="true">×</div></div>
-  <div id="look-hint">FIRE ONLY</div>
+  <div id="aim-overlays"><div id="aim-edge" class="hidden" aria-hidden="true">➤</div><div id="target-marker" class="hidden" aria-hidden="true">▼</div><div id="hit-marker" aria-hidden="true">×</div></div>
+  <div id="look-hint">FRUIT POWER</div>
   <button class="fire fire-right" id="fire-right" aria-label="Fire; hold to shoot"><svg class="reload-ring" viewBox="0 0 100 100" aria-hidden="true"><circle id="reload-ring" cx="50" cy="50" r="47" pathLength="100"/></svg><span id="fire-label">FIRE</span><small id="fire-hint">HOLD TO FIRE</small></button>
-  <div class="actions"><button id="reload">RELOAD</button><button id="swap">PISTOL</button></div>
-  <div id="hint">Left stick moves + aims · Nearby targets stay assisted<br>Hold FIRE to shoot</div>
+  <div class="actions"><button id="reload">RELOAD</button><button id="swap">PEACH</button></div>
+  <div id="hint">Left stick moves + aims · Hold FIRE to pop<br>Desktop: WASD + mouse · R reload · Q swap</div>
+  <section id="garden-panel" aria-label="Your garden and adventures">
+    <div class="garden-card">
+      <div class="eyebrow">THE SPROUT RESCUE CLUB <span id="seed-count">0 seeds</span></div>
+      <h1 id="garden-title">Small garden.<br>Big adventure.</h1>
+      <p id="garden-copy">Mischievous rascals are after your little sprout. Grab a fruit blaster, rescue the garden, and make it your own.</p>
+      <div class="mission-tags"><span>90 seconds</span><span>3 waves</span><span>2 fruit blasters</span></div>
+      <button id="play" class="primary">Play garden rescue →</button>
+      <button id="next-adventure" class="next" disabled>Peach Grove · 0/2 rescues</button>
+      <div class="shop-title">MAKE IT BLOOM <span>Seeds from every rescue</span></div>
+      <div class="shop">
+        <div><span class="shop-art">✿</span><strong>Wildflowers</strong><button id="buy-flowers" disabled>15 seeds</button></div>
+        <div><span class="shop-art peach">◉</span><strong>Peach lantern</strong><button id="buy-lantern" disabled>25 seeds</button></div>
+        <div><span class="shop-art berry">✦</span><strong>Berry jacket</strong><button id="buy-outfit" disabled>30 seeds</button></div>
+      </div>
+      <small id="save-note">Saved on this device</small>
+      <small class="how">Move + aim with your left thumb. Hold FIRE with your right.<br>Keep moving and clear the rascals to rescue the sprout.</small>
+    </div>
+  </section>
   <div id="welcome" class="hidden" role="alert"></div>
-  <script type="module" src="./src/main.js?v=combat-18"></script>
+  <script type="module" src="./src/main.js?v=juicy-1"></script>
 </body>
 </html>
